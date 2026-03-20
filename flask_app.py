@@ -2,6 +2,8 @@ from flask import Flask, render_template, request
 
 from helper import perform_calculation, convert_to_float
 
+from circle import Circle
+
 app = Flask(__name__)  # create the instance of the flask class
 
 
@@ -10,6 +12,22 @@ app = Flask(__name__)  # create the instance of the flask class
 def home():
     return render_template('home.html')
 
+@app.route('/circle', methods=['GET','POST'])
+def circle():
+    if request.method == 'POST':
+        radius = request.form['radius']
+
+        try:
+            radius = convert_to_float(value=radius)
+        except ValueError:
+            return render_template('circle.html', printed_result = "Cannot perform operation with this input")
+    
+        circle = Circle(radius=radius)
+        result = round(circle.perimeter(),2)
+        return render_template('circle.html', printed_result = str(result))
+    
+    return render_template('circle.html')
+    
 
 @app.route('/calculate', methods=['GET', 'POST'])  # associating the GET and POST method with this route
 def calculate():
